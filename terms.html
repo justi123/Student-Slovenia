@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terms & Conditions | Slovenia Student Arrival Checklist</title>
+
+  <style>
+    :root{
+      --bg:#070b14;
+      --text:#eaf2ff;
+      --muted:#9fb0cf;
+      --border:rgba(255,255,255,0.10);
+      --accent:#4da3ff;
+      --shadow: 0 16px 60px rgba(0,0,0,0.45);
+
+      --surface: rgba(15,23,42,0.86);
+      --surface2: rgba(255,255,255,0.03);
+      --btnbg: rgba(255,255,255,0.05);
+    }
+
+    body[data-theme="light"]{
+      --bg:#f7f9ff;
+      --text:#0a1020;
+      --muted:#465a80;
+      --border:rgba(10,16,32,0.14);
+      --shadow: 0 16px 45px rgba(0,0,0,0.10);
+
+      --surface: rgba(255,255,255,0.92);
+      --surface2: rgba(10,16,32,0.03);
+      --btnbg: rgba(10,16,32,0.04);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 12% 0%, rgba(77,163,255,0.22), transparent 60%),
+        radial-gradient(900px 500px at 88% 10%, rgba(34,197,94,0.16), transparent 60%),
+        var(--bg);
+    }
+    body[data-theme="light"]{
+      background:
+        radial-gradient(900px 500px at 12% 0%, rgba(77,163,255,0.14), transparent 60%),
+        radial-gradient(900px 500px at 88% 10%, rgba(34,197,94,0.10), transparent 60%),
+        var(--bg);
+    }
+
+    .wrap{max-width:1100px; margin:0 auto; padding:20px 12px 60px;}
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      flex-wrap:wrap;
+      padding:16px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    h1{margin:0; font-size:18px;}
+    .muted{color:var(--muted); font-size:13px; line-height:1.5;}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap;}
+    .btn{
+      cursor:pointer;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--btnbg);
+      color:var(--text);
+      font-size:13px;
+      transition:.15s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn:hover{
+      transform:translateY(-1px);
+      background:rgba(77,163,255,0.12);
+      border-color:rgba(77,163,255,0.25);
+    }
+
+    .card{
+      margin-top:14px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      box-shadow: var(--shadow);
+    }
+    .card h2{margin:0 0 10px; font-size:15px;}
+    .card p{margin:8px 0; color:var(--muted); font-size:13px; line-height:1.6;}
+    ul{margin:8px 0; padding-left:18px;}
+    li{margin:6px 0; color:var(--muted); font-size:13px; line-height:1.6;}
+
+    footer{
+      margin-top:14px;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .links{
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div>
+        <h1>📜 Terms & Conditions</h1>
+        <p class="muted">
+          By using the <b>Slovenia Student Arrival Checklist</b> website, you agree to these Terms.
+        </p>
+        <p class="muted"><b>Last Updated:</b> 2026</p>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="index.html">⬅️ Back to Home</a>
+        <button class="btn" onclick="toggleTheme()">🌙 Theme</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>1) Educational Purpose</h2>
+      <p>
+        This website provides student guidance and checklist tools for convenience. It is not legal,
+        immigration, or official government advice.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>2) Accuracy of Information</h2>
+      <p>
+        We try to keep information accurate and useful, but rules and procedures may change anytime.
+        Always confirm important steps with official sources (University, Upravna Enota, FURS, etc.).
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>3) User Responsibility</h2>
+      <ul>
+        <li>You are responsible for your documents, deadlines, and actions.</li>
+        <li>You should verify the latest requirements for residence permits and registrations.</li>
+        <li>We are not responsible for any loss or issues due to reliance on this checklist.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>4) External Links</h2>
+      <p>
+        This site includes external links (Google Maps, service providers). We do not control those websites
+        and are not responsible for their content.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>5) Ads & Monetization</h2>
+      <p>
+        If Google AdSense or other ads are enabled, ads may appear on the website. We do not guarantee
+        the quality or accuracy of any advertisement content.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>6) Changes to Terms</h2>
+      <p>
+        We may update these Terms anytime without notice. Continued use of the website means you accept
+        the updated Terms.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>7) Contact</h2>
+      <p>
+        For any questions, please reach out via the contact page:
+        <a href="contact.html" style="color:var(--accent)">Contact</a>
+      </p>
+    </section>
+
+    <div class="links">
+      <a class="btn" href="privacy-policy.html">🔒 Privacy Policy</a>
+      <a class="btn" href="contact.html">📩 Contact</a>
+    </div>
+
+    <footer>
+      Built for students in Slovenia 🇸🇮 | Created by <b>Justin Johnson</b>
+    </footer>
+
+  </div>
+
+  <script>
+    function setTheme(theme){
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem("jj_theme", theme);
+    }
+    function toggleTheme(){
+      const current = document.body.getAttribute("data-theme") || "dark";
+      setTheme(current === "dark" ? "light" : "dark");
+    }
+
+    // Init theme
+    const savedTheme = localStorage.getItem("jj_theme") || "dark";
+    setTheme(savedTheme);
+  </script>
+</body>
+</html>
