@@ -14,6 +14,7 @@
       --accent:#4da3ff;
       --accent2:#22c55e;
       --warn:#ffcc66;
+      --danger:#ff6b6b;
       --shadow: 0 16px 60px rgba(0,0,0,0.45);
 
       --surface: rgba(15,23,42,0.86);
@@ -37,6 +38,11 @@
     }
 
     *{box-sizing:border-box}
+
+    html{
+      scroll-behavior: smooth;
+    }
+
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -214,6 +220,7 @@
     body[data-theme="light"] .tag{background: rgba(10,16,32,0.04);}
     .tag.warn{color:var(--warn); border-color:rgba(255,204,102,0.35);}
     .tag.good{color:var(--accent2); border-color:rgba(34,197,94,0.35);}
+    .tag.bad{color:var(--danger); border-color:rgba(255,107,107,0.35);}
 
     .dayBody{ padding: 0 14px 14px; }
 
@@ -313,7 +320,7 @@
     /* Inputs */
     .field{display:grid; gap:6px; margin-top:10px;}
     .field label{font-size:12.5px; color:var(--muted);}
-    .field input, .field select{
+    .field input, .field select, .field textarea{
       width:100%;
       padding:11px 12px;
       border-radius:12px;
@@ -322,11 +329,14 @@
       color:var(--text);
       outline:none;
       font-size:14px;
+      resize: vertical;
     }
-    body[data-theme="light"] .field input, body[data-theme="light"] .field select{
+    body[data-theme="light"] .field input,
+    body[data-theme="light"] .field select,
+    body[data-theme="light"] .field textarea{
       background: rgba(10,16,32,0.04);
     }
-    .field input:focus, .field select:focus{
+    .field input:focus, .field select:focus, .field textarea:focus{
       border-color:rgba(77,163,255,0.45);
       box-shadow:0 0 0 4px rgba(77,163,255,0.08);
     }
@@ -383,7 +393,99 @@
     .tabContent ul{margin:0; padding-left:18px;}
     .tabContent li{margin:4px 0; color:var(--muted); font-size:12.5px; line-height:1.35;}
 
+    /* Mini output box for tools */
+    .resultBox{
+      margin-top:10px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(34,197,94,0.25);
+      background: rgba(34,197,94,0.06);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .resultBox .small{color:var(--muted); font-size:12.3px;}
+    .resultBox .big{font-weight:800; font-size:16px; margin-top:6px;}
+
+    .divider{
+      height:1px;
+      width:100%;
+      background: var(--border);
+      margin: 10px 0;
+      opacity: 0.8;
+    }
+
     footer{margin-top:14px; text-align:center; color:var(--muted); font-size:12px;}
+    iframe{border:0; width:100%; border-radius:16px; min-height:280px;}
+
+    /* ✅ Floating Quick Menu */
+    .floatingMenu{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: grid;
+      gap: 10px;
+      z-index: 9999;
+      transition: .2s ease;
+    }
+
+    .floatBtn{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      border-radius:999px;
+      padding:12px 14px;
+      border:1px solid rgba(77,163,255,0.25);
+      background: rgba(15,23,42,0.92);
+      backdrop-filter: blur(10px);
+      color: var(--text);
+      font-size: 13px;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.35);
+      transition: .15s ease;
+      text-decoration:none;
+      white-space: nowrap;
+    }
+
+    body[data-theme="light"] .floatBtn{
+      background: rgba(255,255,255,0.95);
+      box-shadow: 0 18px 55px rgba(0,0,0,0.10);
+    }
+
+    .floatBtn:hover{
+      transform: translateY(-2px);
+      background: rgba(77,163,255,0.16);
+    }
+
+    .floatBtn.small{
+      padding: 12px;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+    }
+
+    .floatBtn span{
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    /* Hide labels on small screens */
+    @media(max-width: 520px){
+      .floatBtn .label{display:none;}
+      .floatBtn{
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 14px;
+      }
+    }
+
+    .floatingMenu.hide{
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+    }
   </style>
 </head>
 
@@ -391,10 +493,11 @@
   <div class="wrap">
     <header>
       <div class="brand">
-        <h1>🇸🇮 Slovenia Student Arrival Checklist </h1>
+        <h1>🇸🇮 Slovenia Student Arrival Checklist</h1>
         <p>
           Clean day-wise steps with locations, documents, and Google Maps buttons.
-          Includes budget, emergency info, SIM help, cheapest shops, and packing checklist.
+          Now includes: Cost calculator, currency converter, documents checklist, rent tips, food guide,
+          transport guide, mental support, jobs guide, and Maribor map.
         </p>
         <div class="by">Created by <b>Justin Johnson</b></div>
       </div>
@@ -412,7 +515,7 @@
     <div class="grid">
 
       <!-- LEFT -->
-      <section class="card">
+      <section class="card" id="top">
         <h2>📊 Progress</h2>
         <p class="muted">Your progress updates automatically when you tick steps.</p>
 
@@ -443,7 +546,7 @@
         </div>
 
         <!-- DAY 1 -->
-        <details class="day" id="day1" >
+        <details class="day" id="day1">
           <summary class="daySummary">
             <div>
               <div class="dayTitle">DAY 1 — Setup & Registration</div>
@@ -615,12 +718,12 @@
       </section>
 
       <!-- RIGHT -->
-      <aside class="card">
+      <aside class="card" id="tools">
         <h2>✅ Student Helper Panels</h2>
         <p class="muted">All extra information is inside neat dropdowns.</p>
 
         <!-- Locations Panel -->
-        <details class="panel" id="locationsPanel" >
+        <details class="panel" id="locationsPanel">
           <summary class="panelSummary">
             <div>
               <div class="panelTitle">📍 Edit Places & Address</div>
@@ -691,12 +794,98 @@
           </div>
         </details>
 
-        <!-- Packing Panel with Tabs -->
-        <details class="panel">
+        <!-- Cost of Living Calculator -->
+        <details class="panel" id="costPanel">
           <summary class="panelSummary">
             <div>
-              <div class="panelTitle">🎒 What to Pack Before Coming</div>
-              <div class="panelHint">Winter vs Summer + PDF + Don’t bring list</div>
+              <div class="panelTitle">🧾 Cost of Living Calculator</div>
+              <div class="panelHint">Monthly expense + emergency savings</div>
+            </div>
+            <span class="tag">€</span>
+          </summary>
+
+          <div class="panelBody">
+            <div class="two">
+              <div class="field">
+                <label>Rent (€)</label>
+                <input id="cRent" type="number" placeholder="e.g., 300" />
+              </div>
+              <div class="field">
+                <label>Food (€)</label>
+                <input id="cFood" type="number" placeholder="e.g., 180" />
+              </div>
+            </div>
+
+            <div class="two">
+              <div class="field">
+                <label>Transport (€)</label>
+                <input id="cTransport" type="number" placeholder="e.g., 30" />
+              </div>
+              <div class="field">
+                <label>Phone/Internet (€)</label>
+                <input id="cPhone" type="number" placeholder="e.g., 15" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Other (€)</label>
+              <input id="cOther" type="number" placeholder="e.g., 60" />
+            </div>
+
+            <div class="actions" style="margin-top:10px;">
+              <button class="btn primary" onclick="calculateCost()">✅ Calculate</button>
+              <button class="btn" onclick="resetCost()">♻️ Reset</button>
+            </div>
+
+            <div class="resultBox" id="costOut">
+              <div><b>Total Monthly Expense:</b> <span id="totalMonthly">0</span> €</div>
+              <div class="divider"></div>
+              <div><b>Emergency Savings (2 months):</b> <span id="emergencyMonthly">0</span> €</div>
+              <div class="small">Tip: Keep 2 months emergency backup for safer student life.</div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Currency Converter -->
+        <details class="panel" id="currencyPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">💶 INR → EUR Converter</div>
+              <div class="panelHint">Approx conversion (save your rate)</div>
+            </div>
+            <span class="tag">INR</span>
+          </summary>
+
+          <div class="panelBody">
+            <div class="two">
+              <div class="field">
+                <label>INR Amount</label>
+                <input id="inrAmount" type="number" placeholder="e.g., 10000" />
+              </div>
+              <div class="field">
+                <label>Rate (1€ = INR)</label>
+                <input id="eurRate" type="number" placeholder="e.g., 90" />
+              </div>
+            </div>
+
+            <div class="actions" style="margin-top:10px;">
+              <button class="btn primary" onclick="convertINR()">Convert</button>
+              <button class="btn" onclick="saveRate()">Save Rate</button>
+            </div>
+
+            <div class="resultBox">
+              <div><b>EUR Result:</b> <span id="eurOut">0</span> €</div>
+              <div class="small">Estimate only. Real exchange rate may vary.</div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Packing Panel -->
+        <details class="panel" id="packingPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">🎒 Packing Checklist + Weight Helper</div>
+              <div class="panelHint">Winter vs Summer + suitcase smart pack</div>
             </div>
             <span class="tag">✈️</span>
           </summary>
@@ -706,14 +895,12 @@
               Download your printable packing checklist and pack smart ✅
             </div>
 
-            <!-- PDF Button -->
             <div style="margin-top:10px;">
               <a class="mapBtn" href="packing-checklist.pdf" download>
                 📄 Download Packing Checklist (PDF)
               </a>
             </div>
 
-            <!-- Tabs -->
             <div class="tabsRow">
               <button class="tabBtn active" id="tabWinter" onclick="setPackTab('winter')">❄️ Winter</button>
               <button class="tabBtn" id="tabSummer" onclick="setPackTab('summer')">☀️ Summer</button>
@@ -732,6 +919,38 @@
             </div>
 
             <div class="helpBox">
+              <b>🧳 Smart Weight Helper</b><br/>
+              Choose suitcase limit and get priority list.
+              <div class="two" style="margin-top:10px;">
+                <div class="field" style="margin-top:0;">
+                  <label>Suitcase Limit</label>
+                  <select id="kgLimit">
+                    <option value="20">20 KG</option>
+                    <option value="30">30 KG</option>
+                  </select>
+                </div>
+                <div class="field" style="margin-top:0;">
+                  <label>How many bags?</label>
+                  <select id="bagCount">
+                    <option value="1">1 bag</option>
+                    <option value="2">2 bags</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="actions" style="margin-top:10px;">
+                <button class="btn primary" onclick="weightPlan()">✅ Show Plan</button>
+              </div>
+
+              <div class="tabContent" id="weightResult" style="margin-top:10px;">
+                <b>Suggested Packing Plan</b>
+                <ul>
+                  <li>Select your suitcase limit and click "Show Plan"</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="helpBox">
               <b>❌ What NOT to bring (avoid extra weight)</b><br/>
               • Too many clothes (buy cheap in Slovenia later)<br/>
               • Heavy kitchen items (big cooker/pans)<br/>
@@ -744,8 +963,255 @@
           </div>
         </details>
 
+        <!-- Documents Checklist -->
+        <details class="panel" id="documentsPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">📄 Documents Checklist (Before/After)</div>
+              <div class="panelHint">Stay safe with correct documents</div>
+            </div>
+            <span class="tag">Docs</span>
+          </summary>
+
+          <div class="panelBody">
+            <div class="tabsRow">
+              <button class="tabBtn active" id="docBeforeBtn" onclick="setDocTab('before')">Before Coming</button>
+              <button class="tabBtn" id="docAfterBtn" onclick="setDocTab('after')">After Arrival</button>
+            </div>
+
+            <div class="tabContent" id="docContent">
+              <b>Before Coming ✅</b>
+              <ul>
+                <li>Visa / Residence approval letter</li>
+                <li>Insurance documents</li>
+                <li>University letter / admission proof</li>
+                <li>Passport copies (keep multiple)</li>
+                <li>Passport photos</li>
+                <li>Proof of funds / bank statement</li>
+                <li>Flight ticket confirmation</li>
+              </ul>
+            </div>
+
+            <div class="helpBox">
+              <b>Pro tip:</b> Keep scanned copies in Google Drive + email backup.
+            </div>
+          </div>
+        </details>
+
+        <!-- Rent Tips -->
+        <details class="panel" id="rentPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">🏠 Rent & Room Finder Tips</div>
+              <div class="panelHint">Avoid scams + contract checklist</div>
+            </div>
+            <span class="tag warn">Important</span>
+          </summary>
+
+          <div class="panelBody">
+            <div class="helpBox" style="margin-top:0;">
+              <b>✅ Where to search rooms:</b><br/>
+              • Facebook groups (Maribor students, accommodation groups)<br/>
+              • University dorm/student office<br/>
+              • Trusted agencies only<br/>
+              • Seniors/friends referrals
+            </div>
+
+            <div class="helpBox">
+              <b>🚫 Scam alert checklist:</b><br/>
+              • Asking full money before contract ❌<br/>
+              • Refusing room viewing/video call ❌<br/>
+              • Contract missing name/address ❌<br/>
+              • Too cheap price compared to market ❌<br/>
+              • Pressure “pay now” urgency ❌
+            </div>
+
+            <div class="helpBox">
+              <b>✅ Ask owner:</b><br/>
+              • Is heating/electricity included?<br/>
+              • Internet included or not?<br/>
+              • Deposit amount and return terms?<br/>
+              • Visitors allowed / quiet hour rules?<br/>
+              • Address registration possible?
+            </div>
+
+            <div class="helpBox">
+              <b>💡 Contract tip:</b><br/>
+              Always keep payment proof + written agreement.
+            </div>
+          </div>
+        </details>
+
+        <!-- Food Guide -->
+        <details class="panel" id="foodPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">🍲 Cheap Student Food Guide</div>
+              <div class="panelHint">Budget meals + grocery ideas</div>
+            </div>
+            <span class="tag">Food</span>
+          </summary>
+          <div class="panelBody">
+            <div class="helpBox" style="margin-top:0;">
+              <b>✅ Budget meal ideas:</b><br/>
+              • Pasta + sauce + chicken/beans<br/>
+              • Rice + eggs + vegetables<br/>
+              • Oats + milk + banana<br/>
+              • Bread + peanut butter + fruit<br/>
+              • Frozen veggies + noodles
+            </div>
+
+            <div class="helpBox">
+              <b>🛒 Average grocery prices (approx):</b><br/>
+              • Milk: €1 – €1.5<br/>
+              • Bread: €1 – €2<br/>
+              • Eggs (10): €2 – €4<br/>
+              • Chicken: €6 – €10/kg<br/>
+              • Rice: €2 – €4/kg
+            </div>
+
+            <div class="helpBox">
+              <b>✅ Save money by:</b><br/>
+              • Cooking at home more often<br/>
+              • Shopping in Hofer/Lidl/Eurospin<br/>
+              • Buying toiletries from DM
+            </div>
+          </div>
+        </details>
+
+        <!-- Transport Guide -->
+        <details class="panel" id="transportPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">🚍 Transport Guide (Bus / Student Discounts)</div>
+              <div class="panelHint">Travel cheap and smart</div>
+            </div>
+            <span class="tag">Bus</span>
+          </summary>
+          <div class="panelBody">
+            <div class="helpBox" style="margin-top:0;">
+              <b>✅ How to use bus card:</b><br/>
+              • Buy city bus card from office<br/>
+              • Recharge monthly/weekly<br/>
+              • Tap/validate depending on system
+            </div>
+
+            <div class="helpBox">
+              <b>🎓 Student discounts:</b><br/>
+              • Ask university for student travel info<br/>
+              • Train discounts sometimes available<br/>
+              • Always keep student ID
+            </div>
+          </div>
+        </details>
+
+        <!-- Jobs Guide -->
+        <details class="panel" id="jobsPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">💼 Part-time Jobs Guide</div>
+              <div class="panelHint">Where to find + CV + phrases</div>
+            </div>
+            <span class="tag good">Work</span>
+          </summary>
+          <div class="panelBody">
+            <div class="helpBox" style="margin-top:0;">
+              <b>✅ Where to find jobs:</b><br/>
+              • Študentski servis (Student Work Service)<br/>
+              • Restaurants/cafes (ask directly)<br/>
+              • Warehouse/cleaning/delivery<br/>
+              • Student groups/notice boards
+            </div>
+
+            <div class="helpBox">
+              <b>📄 CV Tips:</b><br/>
+              • Keep 1 page CV<br/>
+              • Add availability clearly<br/>
+              • Mention English + basic Slovenian<br/>
+              • Add correct phone/email
+            </div>
+
+            <div class="helpBox">
+              <b>🗣️ Basic Slovenian:</b><br/>
+              • Dober dan = Good day<br/>
+              • Hvala = Thank you<br/>
+              • Prosim = Please / Welcome<br/>
+              • Govorite angleško? = Do you speak English?
+            </div>
+
+            <div class="helpBox">
+              <b>⚖️ Work rules basics:</b><br/>
+              • Use student work service for legal work<br/>
+              • Keep contract/payment proof
+            </div>
+          </div>
+        </details>
+
+        <!-- Mental Health -->
+        <details class="panel" id="mentalPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">🧠 Student Mental Health Support</div>
+              <div class="panelHint">Homesickness + stress tips</div>
+            </div>
+            <span class="tag">Care</span>
+          </summary>
+          <div class="panelBody">
+            <div class="helpBox" style="margin-top:0;">
+              <b>🏠 Homesickness tips:</b><br/>
+              • Call family daily fixed times<br/>
+              • Join student communities/events<br/>
+              • Walk outside daily<br/>
+              • Cook home food sometimes
+            </div>
+
+            <div class="helpBox">
+              <b>📚 Study pressure tips:</b><br/>
+              • Small targets everyday<br/>
+              • Sleep properly<br/>
+              • Ask seniors for exam tips<br/>
+              • Use university counselors if needed
+            </div>
+
+            <div class="helpBox">
+              <b>🚨 Emergency contact:</b><br/>
+              ✅ 112 – Ambulance/Fire/Emergency<br/>
+              ✅ 113 – Police
+            </div>
+          </div>
+        </details>
+
+        <!-- Maribor Map -->
+        <details class="panel" id="mapPanel">
+          <summary class="panelSummary">
+            <div>
+              <div class="panelTitle">📍 Maribor Student Map</div>
+              <div class="panelHint">University + Indian stores + dorms</div>
+            </div>
+            <span class="tag">Map</span>
+          </summary>
+
+          <div class="panelBody">
+            <div class="helpBox" style="margin-top:0;">
+              Embedded map for Maribor + quick searches.
+            </div>
+
+            <iframe
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Maribor+Slovenia&output=embed"></iframe>
+
+            <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="mapBtn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/University+of+Maribor">🎓 University</a>
+              <a class="mapBtn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/Indian+store+Maribor">🛒 Indian Stores</a>
+              <a class="mapBtn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/dormitory+Maribor">🏢 Dorms</a>
+              <a class="mapBtn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/bus+station+Maribor">🚌 Bus Station</a>
+            </div>
+          </div>
+        </details>
+
         <!-- Budget -->
-        <details class="panel">
+        <details class="panel" id="budgetPanel">
           <summary class="panelSummary">
             <div>
               <div class="panelTitle">💶 Student Budget Plan (Monthly)</div>
@@ -768,7 +1234,7 @@
         </details>
 
         <!-- Emergency -->
-        <details class="panel">
+        <details class="panel" id="emergencyPanel">
           <summary class="panelSummary">
             <div>
               <div class="panelTitle">🚨 Emergency Numbers (Slovenia)</div>
@@ -786,7 +1252,7 @@
         </details>
 
         <!-- Nearby Hospital/Pharmacy -->
-        <details class="panel">
+        <details class="panel" id="healthPanel">
           <summary class="panelSummary">
             <div>
               <div class="panelTitle">🏥 Nearby Hospital / Pharmacy</div>
@@ -806,7 +1272,7 @@
         </details>
 
         <!-- SIM Options -->
-        <details class="panel">
+        <details class="panel" id="simPanel">
           <summary class="panelSummary">
             <div>
               <div class="panelTitle">📶 Fastest SIM Card Options</div>
@@ -830,7 +1296,7 @@
         </details>
 
         <!-- Cheapest Shops -->
-        <details class="panel">
+        <details class="panel" id="shopsPanel">
           <summary class="panelSummary">
             <div>
               <div class="panelTitle">🛒 Cheapest Shops</div>
@@ -854,7 +1320,7 @@
         </details>
 
         <!-- Tips -->
-        <details class="panel">
+        <details class="panel" id="tipsPanel">
           <summary class="panelSummary">
             <div>
               <div class="panelTitle">❄️ Tips (Winter • Safety • Rules)</div>
@@ -887,6 +1353,29 @@
     </footer>
   </div>
 
+  <!-- ✅ Floating Quick Menu Buttons -->
+  <div class="floatingMenu" id="floatingMenu">
+    <button class="floatBtn small" onclick="scrollToTop()" title="Go to top">
+      <span>⬆️</span>
+    </button>
+
+    <button class="floatBtn" onclick="openPanel('costPanel')" title="Cost calculator">
+      <span>🧾</span> <span class="label">Cost</span>
+    </button>
+
+    <button class="floatBtn" onclick="openPanel('packingPanel')" title="Packing helper">
+      <span>🎒</span> <span class="label">Packing</span>
+    </button>
+
+    <button class="floatBtn" onclick="openPanel('documentsPanel')" title="Documents checklist">
+      <span>📄</span> <span class="label">Docs</span>
+    </button>
+
+    <button class="floatBtn" onclick="openPanel('mapPanel')" title="Maribor map">
+      <span>📍</span> <span class="label">Map</span>
+    </button>
+  </div>
+
   <script>
     const $ = (id) => document.getElementById(id);
 
@@ -900,6 +1389,34 @@
       const n = encodeURIComponent(near);
       return `https://www.google.com/maps/search/${q}+near+${n}`;
     }
+
+    // ✅ Floating menu helpers
+    function scrollToTop(){
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function openPanel(panelId){
+      const panel = document.getElementById(panelId);
+      if(!panel){
+        alert("Panel not found: " + panelId);
+        return;
+      }
+      panel.open = true;
+      panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    window.addEventListener("scroll", ()=>{
+      const fm = $("floatingMenu");
+      if(!fm) return;
+
+      if(window.scrollY > 180) fm.classList.remove("hide");
+      else fm.classList.add("hide");
+    });
+
+    window.addEventListener("load", ()=>{
+      const fm = $("floatingMenu");
+      if(fm) fm.classList.add("hide");
+    });
 
     // Packing Tabs
     function setPackTab(tab){
@@ -939,6 +1456,141 @@
       }
     }
 
+    // Documents tabs
+    function setDocTab(tab){
+      const beforeBtn = $("docBeforeBtn");
+      const afterBtn = $("docAfterBtn");
+      const box = $("docContent");
+
+      beforeBtn.classList.remove("active");
+      afterBtn.classList.remove("active");
+
+      if(tab === "before"){
+        beforeBtn.classList.add("active");
+        box.innerHTML = `
+          <b>Before Coming ✅</b>
+          <ul>
+            <li>Visa / Residence approval letter</li>
+            <li>Insurance documents</li>
+            <li>University letter / admission proof</li>
+            <li>Passport copies (keep multiple)</li>
+            <li>Passport photos</li>
+            <li>Proof of funds / bank statement</li>
+            <li>Flight ticket confirmation</li>
+          </ul>
+        `;
+      } else {
+        afterBtn.classList.add("active");
+        box.innerHTML = `
+          <b>After Arrival ✅</b>
+          <ul>
+            <li>Residence permit steps completed</li>
+            <li>Police registration (if needed)</li>
+            <li>Student card / enrollment proof</li>
+            <li>Bank account opened</li>
+            <li>SIM card + internet setup</li>
+            <li>Transport/student pass setup</li>
+          </ul>
+        `;
+      }
+    }
+
+    // Weight plan
+    function weightPlan(){
+      const kg = parseInt($("kgLimit").value || "20", 10);
+      const bags = parseInt($("bagCount").value || "1", 10);
+      const total = kg * bags;
+      const out = $("weightResult");
+
+      let must = [
+        "Passport + documents folder",
+        "1 good jacket / hoodie",
+        "Laptop + charger + adapters",
+        "Basic medicines",
+        "2 shoes (daily + rain/warm)",
+        "Thermals (if winter)"
+      ];
+      let optional = [
+        "Extra clothes (buy in Slovenia later)",
+        "Extra utensils (not needed)",
+        "Big food packets (avoid)",
+        "Too many books (PDFs best)"
+      ];
+
+      let warning = "";
+      if(total <= 20) warning = "⚠️ Limited luggage. Keep only MUST items.";
+      else if(total <= 40) warning = "✅ Good capacity. Carry essentials + some extra.";
+      else warning = "✅ Big capacity. Still avoid heavy kitchen items.";
+
+      out.innerHTML = `
+        <b>Suggested Packing Plan (${bags} bag(s) × ${kg}kg = ${total}kg)</b>
+        <ul>
+          <li><b>MUST TAKE:</b> ${must.join(", ")}</li>
+          <li><b>OPTIONAL:</b> ${optional.join(", ")}</li>
+          <li><b>${warning}</b></li>
+        </ul>
+      `;
+    }
+
+    // Cost calculator
+    function nval(id){
+      const v = parseFloat($(id).value);
+      return isNaN(v) ? 0 : v;
+    }
+
+    function calculateCost(){
+      const rent = nval("cRent");
+      const food = nval("cFood");
+      const tr = nval("cTransport");
+      const phone = nval("cPhone");
+      const other = nval("cOther");
+
+      const total = rent + food + tr + phone + other;
+      const emergency = total * 2;
+
+      $("totalMonthly").textContent = total.toFixed(0);
+      $("emergencyMonthly").textContent = emergency.toFixed(0);
+
+      localStorage.setItem("jj_cost_rent", rent);
+      localStorage.setItem("jj_cost_food", food);
+      localStorage.setItem("jj_cost_tr", tr);
+      localStorage.setItem("jj_cost_phone", phone);
+      localStorage.setItem("jj_cost_other", other);
+    }
+
+    function resetCost(){
+      ["cRent","cFood","cTransport","cPhone","cOther"].forEach(id => $(id).value = "");
+      $("totalMonthly").textContent = "0";
+      $("emergencyMonthly").textContent = "0";
+
+      ["jj_cost_rent","jj_cost_food","jj_cost_tr","jj_cost_phone","jj_cost_other"].forEach(k => localStorage.removeItem(k));
+    }
+
+    // Currency converter
+    function convertINR(){
+      const inr = nval("inrAmount");
+      const rate = nval("eurRate");
+
+      if(rate <= 0){
+        alert("Please enter a valid EUR rate (1€ = INR).");
+        return;
+      }
+      const eur = inr / rate;
+      $("eurOut").textContent = eur.toFixed(2);
+      localStorage.setItem("jj_inr_amount", inr);
+    }
+
+    function saveRate(){
+      const rate = nval("eurRate");
+      if(rate <= 0){
+        alert("Please enter a valid rate.");
+        return;
+      }
+      localStorage.setItem("jj_eur_rate", rate);
+      alert("✅ Rate saved!");
+    }
+
+    // Checklist progress
     const stepIds = ["s1","s2","s3","s4","s5","s6","s7","s8"];
     const day1Steps = ["s1","s2","s3","s4"];
     const day2Steps = ["s5"];
@@ -1083,6 +1735,11 @@
         localStorage.removeItem(k);
       });
 
+      // Reset tools
+      resetCost();
+      localStorage.removeItem("jj_eur_rate");
+      localStorage.removeItem("jj_inr_amount");
+
       fillMaribor();
       updateProgress();
       alert("✅ Reset done!");
@@ -1117,9 +1774,22 @@
     $("work").value = localStorage.getItem("jj_work") || "Študentski servis Maribor, Gosposvetska cesta 83, 2000 Maribor";
     $("bus").value = localStorage.getItem("jj_bus") || "";
 
+    // Load calculator values
+    $("cRent").value = localStorage.getItem("jj_cost_rent") || "";
+    $("cFood").value = localStorage.getItem("jj_cost_food") || "";
+    $("cTransport").value = localStorage.getItem("jj_cost_tr") || "";
+    $("cPhone").value = localStorage.getItem("jj_cost_phone") || "";
+    $("cOther").value = localStorage.getItem("jj_cost_other") || "";
+
+    // Load currency
+    $("eurRate").value = localStorage.getItem("jj_eur_rate") || "90";
+    $("inrAmount").value = localStorage.getItem("jj_inr_amount") || "";
+
     apply();
     updateProgress();
     setPackTab("winter");
+    setDocTab("before");
+    calculateCost();
   </script>
 </body>
 </html>
