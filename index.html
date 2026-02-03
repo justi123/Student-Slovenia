@@ -497,7 +497,41 @@
     }
   </style>
 </head>
+<!-- ===================== PREMIUM OFFER POPUP ===================== -->
+<div class="offerOverlay" id="offerOverlay">
+  <div class="offerPopup">
+    <button class="offerClose" onclick="closeOffer()">✖</button>
 
+    <h3>🎓 New Student in Slovenia?</h3>
+    <p class="muted">
+      Get everything ready with our <b>Premium PDFs</b> —  
+      packing checklist + official documents templates ✅
+    </p>
+
+    <div class="offerBtns">
+      <button class="mapBtn" onclick="openPanel('gumroadPDFPanel'); closeOffer();">
+        📄 Packing Checklist PDF
+      </button>
+      <button class="mapBtn" onclick="openPanel('docsPackPanel'); closeOffer();">
+        📂 Documents Pack
+      </button>
+    </div>
+
+    <p class="muted" style="margin-top:10px; font-size:12px;">
+      Instant download • One-time payment • Student friendly
+    </p>
+  </div>
+</div>
+
+<!-- ===================== STICKY BOTTOM BANNER ===================== -->
+<div class="bottomBanner" id="bottomBanner">
+  <span>📄 Need full checklist + templates?</span>
+  <div class="bannerBtns">
+    <button onclick="openPanel('gumroadPDFPanel')">Packing PDF</button>
+    <button onclick="openPanel('docsPackPanel')">Docs Pack</button>
+  </div>
+  <button class="bannerClose" onclick="closeBanner()">✖</button>
+</div>
 <body>
   <div class="wrap">
     <header>
